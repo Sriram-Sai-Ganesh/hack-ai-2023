@@ -5,6 +5,7 @@ import mouse_movement
 import math
 import threading
 import sys
+from knn import knn
 
 mouseX = -1
 mouseY = -1
@@ -76,6 +77,7 @@ def video():
     """cv2.namedWindow("window", cv2.WND_PROP_FULLSCREEN)
     cv2.setWindowProperty("window",cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)"""
     detector = handDetector()
+    knnModel = knn()
 
     while True:
         success, img = cap.read()
@@ -96,6 +98,8 @@ def video():
             # Set action based on AI model
             knnInput = lmlist[:][1:2]
             knnInput = knnInput.flatten()
+            action = knnModel.predict(knnInput)
+            print(action)
         else:
             updated = False
 
