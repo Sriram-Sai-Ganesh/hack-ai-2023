@@ -4,7 +4,7 @@ import time
 import mouse_movement
 
 class handDetector():
-    def __init__(self, mode = False, maxHands = 2, detectionCon = 0.5, trackCon = 0.5):
+    def __init__(self, mode = False, maxHands = 1, detectionCon = 0.5, trackCon = 0.5):
         self.mode = mode
         self.maxHands = maxHands
         self.detectionCon = detectionCon
@@ -12,7 +12,7 @@ class handDetector():
 
         self.mpHands = mp.solutions.hands
         self.hands = self.mpHands.Hands(static_image_mode=False,
-                      max_num_hands=2,
+                      max_num_hands=1,
                       min_detection_confidence=0.5,
                       min_tracking_confidence=0.5)
         self.mpDraw = mp.solutions.drawing_utils
@@ -45,6 +45,8 @@ def main():
     pTime = 0
     cTime = 0
     cap = cv2.VideoCapture(0)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH,1920)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT,1080)
     detector = handDetector()
 
     while True:
@@ -53,7 +55,7 @@ def main():
         lmlist = detector.findPosition(img)
         if len(lmlist) != 0:
             print(lmlist)
-            mouse_movement.updateMouse(lmlist[0][1], lmlist[0][2])
+            mouse_movement.updateMouse(lmlist[8][1], lmlist[8][2]) # Pointer finger tip = index 8
 
         cTime = time.time()
         fps = 1 / (cTime - pTime)
