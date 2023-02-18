@@ -2,13 +2,22 @@ import cv2
 import mediapipe as mp
 import time
 import mouse_movement
+import threading
+import sys
+
+mouseX = -1
+mouseY = -1
 
 class handDetector():
+
+
     def __init__(self, mode = False, maxHands = 1, detectionCon = 0.5, trackCon = 0.5):
         self.mode = mode
         self.maxHands = maxHands
         self.detectionCon = detectionCon
         self.trackCon = trackCon
+        self.mouseX = -1
+        self.mouseY = -1
 
         self.mpHands = mp.solutions.hands
         self.hands = self.mpHands.Hands(static_image_mode=False,
@@ -42,6 +51,19 @@ class handDetector():
         return lmlist
 
 def main():
+
+    videoThread = threading.Thread(target=video, args=())
+    mouseThread = threading.Thread(target=mouse, args=())
+
+    videoThread.start()
+    mouseThread.start()
+
+    mouseThread.join()
+    videoThread.join()
+ 
+
+
+def video():
     pTime = 0
     cTime = 0
     cap = cv2.VideoCapture(0)
@@ -56,7 +78,10 @@ def main():
         img = detector.findHands(img)
         lmlist = detector.findPosition(img)
         if len(lmlist) != 0:
-            mouse_movement.updateMouse(lmlist[8][1], lmlist[8][2]) # Pointer finger tip = index 8
+            global mouseX
+            global mouseY
+            mouseX = lmlist[8][1]
+            mouseY = lmlist[8][2]
 
         cTime = time.time()
         fps = 1 / (cTime - pTime)
@@ -67,6 +92,12 @@ def main():
         cv2.imshow("window", img)
         cv2.waitKey(1)
 
+def mouse():
+
+    while True:
+
+        if (mouseX != -1 and mouseY != -1):
+            mouse_movement.updateMouse(mouseX, mouseY) # Pointer finger tip = index 8
 
 if __name__ == "__main__":
     main()
