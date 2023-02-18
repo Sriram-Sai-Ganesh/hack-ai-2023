@@ -16,6 +16,4 @@ def rightClickHold():
     pyautogui.mouseDown(button='right')
 
 def unclick():
-    pyautogui.mouseUp(button='left')
-    pyautogui.mouseUp(button='middle')
-    pyautogui.mouseUp(button='right')
+    pyautogui.mouseUp()

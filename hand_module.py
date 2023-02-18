@@ -6,6 +6,7 @@ import math
 import threading
 import sys
 from knn import knn
+import numpy as np
 
 mouseX = -1
 mouseY = -1
@@ -96,10 +97,14 @@ def video():
             mouseY = lmlist[9][2]
 
             # Set action based on AI model
-            knnInput = lmlist[:][1:2]
-            knnInput = knnInput.flatten()
+            knnInput = np.array(lmlist)
+            knnInput = np.delete(knnInput, obj=0, axis=1)
+            knnInput = np.delete(knnInput, obj=2, axis=1)
+            knnInput = knnInput.reshape(-1,1)
             action = knnModel.predict(knnInput)
+            print("action")
             print(action)
+            print("actions")
         else:
             updated = False
 
