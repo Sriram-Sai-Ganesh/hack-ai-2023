@@ -40,6 +40,18 @@ class handDetector():
         return lmlist
 
 
+def normalize(coordinateList):
+    x9 = coordinateList[9][1]
+    y9 = coordinateList[9][2]
+
+    # Normalize the values
+    coord_list = []
+    for subList in coordinateList:
+        coord_list.append(subList[1]-x9)
+        coord_list.append(subList[2]-y9)
+
+    return coord_list
+
 def main():
     cap = cv2.VideoCapture(0)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH,1920)
@@ -74,10 +86,7 @@ def main():
         img = detector.findHands(img)
         lmlist = detector.findPosition(img)
         if len(lmlist) != 0:
-            coord_list = []
-            for subList in lmlist:
-                coord_list.append(subList[1])
-                coord_list.append(subList[2])
+            coord_list = normalize(lmlist)
             coord_list = [hand_signal] + coord_list
             print(coord_list)
             hand_loc_data.loc[len(hand_loc_data)] = coord_list
