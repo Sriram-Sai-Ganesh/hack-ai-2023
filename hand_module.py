@@ -1,6 +1,8 @@
 import cv2
 import mediapipe as mp
 import time
+import mouse_movement
+
 class handDetector():
     def __init__(self, mode = False, maxHands = 2, detectionCon = 0.5, trackCon = 0.5):
         self.mode = mode
@@ -51,6 +53,7 @@ def main():
         lmlist = detector.findPosition(img)
         if len(lmlist) != 0:
             print(lmlist)
+            mouse_movement.updateMouse(lmlist[0][1], lmlist[0][2])
 
         cTime = time.time()
         fps = 1 / (cTime - pTime)
