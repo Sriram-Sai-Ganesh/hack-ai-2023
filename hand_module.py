@@ -9,6 +9,7 @@ import sys
 mouseX = -1
 mouseY = -1
 updated = False
+action = 30
 
 
 class handDetector():
@@ -83,33 +84,18 @@ def video():
 
 
         if len(lmlist) != 0:
-
             global mouseX
             global mouseY
             global updated
-
+            global action
+            
             updated = True
             mouseX = lmlist[9][1]
             mouseY = lmlist[9][2]
 
-            # Pinky tip = index 20
-            # Ring tip = index 16
-            # Middle tip = index 12
-            # Index tip = index 8
-            # Thumb tip = index 4
-            tipDists = [math.dist(lmlist[4][1:2], lmlist[20][1:2]), math.dist(lmlist[4][1:2], lmlist[16][1:2]), math.dist(lmlist[4][1:2], lmlist[12][1:2]), math.dist(lmlist[4][1:2], lmlist[8][1:2])]
-            minDists = min(tipDists)
-            if minDists < 10 + 5*lmlist[4][3]:
-                finger = tipDists.index(minDists) #0: pinky     1: ring     2: middle       3: index
-                if finger == 0:
-                    print("pinky-thumb")
-                if finger == 1:
-                    print("ring-thumb")
-                if finger == 2:
-                    print("middle-thumb")
-                if finger == 3:
-                    print("index-thumb")
-
+            # Set action based on AI model
+            knnInput = lmlist[:][1:2]
+            knnInput = knnInput.flatten()
         else:
             updated = False
 
@@ -130,6 +116,34 @@ def mouse():
 
         if (mouseX != -1 and mouseY != -1 and updated):
             mouse_movement.updateMouse(mouseX, mouseY) # Pointer finger tip = index 8
+
+            """# Pinky tip = index 20
+            # Ring tip = index 16
+            # Middle tip = index 12
+            # Index tip = index 8
+            # Thumb tip = index 4
+            tipDists = [math.dist(lmlist[4][1:2], lmlist[20][1:2]), math.dist(lmlist[4][1:2], lmlist[16][1:2]), math.dist(lmlist[4][1:2], lmlist[12][1:2]), math.dist(lmlist[4][1:2], lmlist[8][1:2])]
+            minDists = min(tipDists)
+            if minDists < 10 + 5*lmlist[4][3]:
+                finger = tipDists.index(minDists) #0: pinky     1: ring     2: middle       3: index
+                if finger == 0:
+                    print("pinky-thumb")
+                if finger == 1:
+                    print("ring-thumb")
+                if finger == 2:
+                    print("middle-thumb")
+                if finger == 3:
+                    print("index-thumb")"""
+        if action == 10: # Thumbs up = middle click
+            mouse_movement.middleClickHold()
+        elif action == 20: # Thumbs down = right click
+            mouse_movement.rightClickHold()
+        elif action == 30: # Open palm = no click
+            mouse_movement.unclick()
+        elif action == 40: # Closed fist = left click
+            mouse_movement.leftClickHold()
+
+            
 
 if __name__ == "__main__":
     main()
