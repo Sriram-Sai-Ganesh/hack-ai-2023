@@ -2,6 +2,7 @@ import cv2
 import mediapipe as mp
 import time
 import mouse_movement
+import math
 
 class handDetector():
     def __init__(self, mode = False, maxHands = 1, detectionCon = 0.5, trackCon = 0.5):
@@ -36,7 +37,7 @@ class handDetector():
             for id, lm in enumerate(myHand.landmark):
                 h, w, c = img.shape
                 cx, cy = int(lm.x* w), int(lm.y * h)
-                lmlist.append([id, cx, cy])
+                lmlist.append([id, cx, cy, lm.z * -10])
                 if draw:
                     cv2.circle(img, (cx, cy), 3, (255, 0, 255), cv2.FILLED)
         return lmlist
@@ -56,7 +57,25 @@ def main():
         img = detector.findHands(img)
         lmlist = detector.findPosition(img)
         if len(lmlist) != 0:
-            mouse_movement.updateMouse(lmlist[9][1], lmlist[9][2]) # MIddle palm knuckle = index 89
+            mouse_movement.updateMouse(lmlist[9][1], lmlist[9][2]) # Middle palm knuckle = index 9
+
+            # Pinky tip = index 20
+            # Ring tip = index 16
+            # Middle tip = index 12
+            # Index tip = index 8
+            # Thumb tip = index 4
+            tipDists = [math.dist(lmlist[4][1:2], lmlist[20][1:2]), math.dist(lmlist[4][1:2], lmlist[16][1:2]), math.dist(lmlist[4][1:2], lmlist[12][1:2]), math.dist(lmlist[4][1:2], lmlist[8][1:2])]
+            minDists = min(tipDists)
+            if minDists < 10 + 5*lmlist[4][3]:
+                finger = tipDists.index(minDists) #0: pinky     1: ring     2: middle       3: index
+                if finger == 0:
+                    print("pinky-thumb")
+                if finger == 1:
+                    print("ring-thumb")
+                if finger == 2:
+                    print("middle-thumb")
+                if finger == 3:
+                    print("index-thumb")
 
         cTime = time.time()
         fps = 1 / (cTime - pTime)
