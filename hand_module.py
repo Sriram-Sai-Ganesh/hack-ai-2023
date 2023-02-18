@@ -8,7 +8,7 @@ import sys
 
 mouseX = -1
 mouseY = -1
-
+updated = False
 
 
 class handDetector():
@@ -80,10 +80,15 @@ def video():
         success, img = cap.read()
         img = detector.findHands(img)
         lmlist = detector.findPosition(img)
+
+
         if len(lmlist) != 0:
 
             global mouseX
             global mouseY
+            global updated
+
+            updated = True
             mouseX = lmlist[9][1]
             mouseY = lmlist[9][2]
 
@@ -105,6 +110,9 @@ def video():
                 if finger == 3:
                     print("index-thumb")
 
+        else:
+            updated = False
+            
         cTime = time.time()
         fps = 1 / (cTime - pTime)
         pTime = cTime
@@ -114,11 +122,13 @@ def video():
         cv2.imshow("window", img)
         cv2.waitKey(1)
 
+
+
 def mouse():
 
     while True:
 
-        if (mouseX != -1 and mouseY != -1):
+        if (mouseX != -1 and mouseY != -1 and updated):
             mouse_movement.updateMouse(mouseX, mouseY) # Pointer finger tip = index 8
 
 if __name__ == "__main__":
