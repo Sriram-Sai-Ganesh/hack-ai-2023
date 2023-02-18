@@ -45,8 +45,10 @@ def main():
     pTime = 0
     cTime = 0
     cap = cv2.VideoCapture(0)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH,1920)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT,1080)
+    """cap.set(cv2.CAP_PROP_FRAME_WIDTH,1920)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT,1080)"""
+    cv2.namedWindow("window", cv2.WND_PROP_FULLSCREEN)
+    cv2.setWindowProperty("window",cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
     detector = handDetector()
 
     while True:
@@ -63,7 +65,7 @@ def main():
 
         cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
 
-        cv2.imshow("Image", img)
+        cv2.imshow("window", img)
         cv2.waitKey(1)
 
 
