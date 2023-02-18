@@ -12,7 +12,6 @@ class knn:
         vectors = numpy.array(df[df.columns[3:100]])
 
         self.model.fit(classifiers.reshape(-1,1), vectors)
-        self.model.predict()
 
     def predict(self, vector):
         return self.model.predict(vector)
