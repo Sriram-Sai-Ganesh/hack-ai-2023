@@ -56,7 +56,6 @@ def main():
         img = detector.findHands(img)
         lmlist = detector.findPosition(img)
         if len(lmlist) != 0:
-            print(lmlist)
             mouse_movement.updateMouse(lmlist[8][1], lmlist[8][2]) # Pointer finger tip = index 8
 
         cTime = time.time()
