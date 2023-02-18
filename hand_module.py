@@ -112,7 +112,7 @@ def video():
 
         else:
             updated = False
-            
+
         cTime = time.time()
         fps = 1 / (cTime - pTime)
         pTime = cTime
