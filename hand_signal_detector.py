@@ -65,7 +65,7 @@ def main():
     # open palm is 30
     # closed palm fist is 40
 
-    hand_signal = 10
+    hand_signal = 30
 
     col_name = []
     for i in range(21):
