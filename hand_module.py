@@ -56,7 +56,8 @@ def main():
         img = detector.findHands(img)
         lmlist = detector.findPosition(img)
         if len(lmlist) != 0:
-            mouse_movement.updateMouse(lmlist[8][1], lmlist[8][2]) # Pointer finger tip = index 8
+            print(lmlist)
+            mouse_movement.updateMouse(lmlist[9][1], lmlist[9][2]) # MIddle palm knuckle = index 89
 
         cTime = time.time()
         fps = 1 / (cTime - pTime)
