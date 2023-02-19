@@ -1,7 +1,8 @@
+import xgboost as xgb
+
 import cv2
 import mediapipe as mp
-import pandas
-from itertools import cycle
+import numpy as np
 
 class handDetector():
     def __init__(self, mode=False, maxHands=1, detectionCon=0.5, trackCon=0.5):
@@ -52,37 +53,22 @@ def normalize(coordinateList):
 
     return coord_list
 
+def classify(data):
+    hand_classifer = xgb.XGBClassifier()
+    hand_classifer.load_model('basicModel.json')
+    data = data.reshape((1,42))
+    prediction = hand_classifer.predict(data)
+    predToText = {0:"Thumbs Up", 1: "Thumbs Down", 2:"Open Palm", 3:"Closed Fist"}
+    print(predToText.get(prediction[0]))
+
+
 def main():
     cap = cv2.VideoCapture(0)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH,1920)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT,1080)
-    cv2.namedWindow("window", cv2.WND_PROP_FULLSCREEN)
-    cv2.setWindowProperty("window",cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+    #cv2.namedWindow("window", cv2.WND_PROP_FULLSCREEN)
+    #cv2.setWindowProperty("window",cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
     detector = handDetector()
-
-    # thumbs up is 10
-    # thumbs down is 20
-    # open palm is 30
-    # closed palm fist is 40
-
-    hand_signal = 30
-
-    # Create a list of the form ['x0','y0','x1','y1',...]
-    col_name = []
-    # Creates a list of the form [0,0,1,1,...]
-    for i in range(21):
-        col_name.append(i)
-        col_name.append(i)
-    col_name = [str(x) for x in col_name]
-    coord_labels = ["x", "y"]
-    # Create list of tuples
-    col_name = zip(cycle(coord_labels), col_name)
-    labels = []
-    # Create strings
-    for blah in col_name:
-        labels.append(''.join(blah[0] + blah[1]))
-    # Create a list with the first label as the desired signal and the rest of the labels as indices 0-20 (inclusive)
-    hand_loc_data = pandas.DataFrame(columns=["Hand_Signal"]+labels)
 
     x = 0
     while x<1000:
@@ -91,17 +77,10 @@ def main():
         lmlist = detector.findPosition(img)
         if len(lmlist) != 0:
             coord_list = normalize(lmlist)
-            # Add label for which signal it is
-            coord_list = [hand_signal] + coord_list
-            print(coord_list)
-            hand_loc_data.loc[len(hand_loc_data)] = coord_list
-
+            classify(np.array(coord_list))
         cv2.imshow("window", img)
         cv2.waitKey(1)
         x += 1
-
-    hand_loc_data.to_csv('test.csv')
-
 
 if __name__ == "__main__":
     main()
