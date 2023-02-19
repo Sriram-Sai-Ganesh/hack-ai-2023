@@ -2,15 +2,15 @@ import cv2
 import mediapipe as mp
 import time
 import mouse_movement
-import math
 import threading
-import sys
-from knn import knn
-import numpy as np
+
+
+from xgbModel import xgbModel
 
 mouseX = -1
 mouseY = -1
 updated = False
+continueRunning = True
 action = 30
 
 
@@ -78,9 +78,10 @@ def video():
     """cv2.namedWindow("window", cv2.WND_PROP_FULLSCREEN)
     cv2.setWindowProperty("window",cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)"""
     detector = handDetector()
-    knnModel = knn()
+    model = xgbModel()
 
-    while True:
+    global continueRunning
+    while continueRunning:
         success, img = cap.read()
         img = detector.findHands(img)
         lmlist = detector.findPosition(img)
@@ -95,17 +96,12 @@ def video():
             updated = True
             mouseX = lmlist[9][1]
             mouseY = lmlist[9][2]
-
-            # Set action based on AI model
-            knnInput = np.array(lmlist)
-            knnInput = np.delete(knnInput, obj=0, axis=1)
-            knnInput = np.delete(knnInput, obj=2, axis=1)
-            knnInput = knnInput.reshape(1,42)
             
             #
             # ~~~ READ ACTION ~~~~ 
             #
-            action = knnModel.predict(knnInput)
+            action = model.classify(lmlist)
+            action = action*10+10
             print(action)
         else:
             updated = False
@@ -123,7 +119,8 @@ def video():
 
 def mouse():
 
-    while True:
+    global continueRunning
+    while continueRunning:
 
         if (mouseX != -1 and mouseY != -1 and updated):
             mouse_movement.updateMouse(mouseX, mouseY) # Pointer finger tip = index 8
@@ -148,7 +145,7 @@ def mouse():
         if action == 10: # Thumbs up = middle click
             mouse_movement.middleClickHold()
         elif action == 20: # Thumbs down = right click
-            mouse_movement.rightClickHold()
+            continueRunning = False
         elif action == 30: # Open palm = no click
             mouse_movement.unclick()
         elif action == 40: # Closed fist = left click
