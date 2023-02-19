@@ -100,11 +100,11 @@ def video():
             knnInput = np.array(lmlist)
             knnInput = np.delete(knnInput, obj=0, axis=1)
             knnInput = np.delete(knnInput, obj=2, axis=1)
-            knnInput = knnInput.reshape(-1,1)
+            knnInput = knnInput.reshape(1,42)
+            print(knnInput)
+            print (knnModel.predict([[-57,190,27,173,95,132,125,81,142,34,45,14,67,-57,78,-103,88,-144,0,0,22,-82,37,-137,53,-184,-46,1,-29,-76,-10,-125,11,-167,-96,15,-89,-49,-77,-86,-59,-120]]))
             action = knnModel.predict(knnInput)
-            print("action")
             print(action)
-            print("actions")
         else:
             updated = False
 
