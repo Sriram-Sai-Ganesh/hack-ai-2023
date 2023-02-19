@@ -102,7 +102,6 @@ def video():
             #
             action = model.classify(lmlist)
             action = action*10+10
-            print(action)
         else:
             updated = False
 
