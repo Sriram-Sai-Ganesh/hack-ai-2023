@@ -10,10 +10,10 @@ def leftClickHold():
     pyautogui.mouseDown(button='left')
 
 def middleClickHold():
-    pyautogui.mouseDown(button='middle')
+    pyautogui.middleClick()
 
 def rightClickHold():
-    pyautogui.mouseDown(button='right')
+    pyautogui.rightClick()
 
 def unclick():
     pyautogui.mouseUp()
